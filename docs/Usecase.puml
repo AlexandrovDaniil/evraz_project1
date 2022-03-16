@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+left to right direction
+
+rectangle "Enter in system" {
+usecase "Registration" as registration
+usecase "Authorization" as authorization
+}
+
+rectangle "Chat" {
+usecase "Get chat info" as get_chat_info
+usecase "Leave from chat" as leave_chat
+usecase "Back to chat" as back_chat
+usecase "Get all chat members" as get_chat_members
+usecase "Send message" as send_message
+usecase "Get chat message" as get_chat_message
+}
+
+rectangle "Chat administration" {
+usecase "Create chat" as create_chat
+usecase "Delete chat" as delete_chat
+usecase "Invite user" as invite_user
+usecase "Kick user" as kick_user
+usecase "Change chat" as change_chat
+}
+
+
+:Guest: as Guest
+
+Guest -- registration
+
+:User: as User
+
+User ---- authorization
+User -- get_chat_info
+User -- leave_chat
+User -- back_chat
+User -- get_chat_members
+User -- send_message
+User -- get_chat_message
+
+:Super User: as Super_User
+
+
+Super_User -- create_chat
+Super_User -- delete_chat
+Super_User -- invite_user
+Super_User -- kick_user
+Super_User -- change_chat
+
+
+User ---|> Super_User
+
+@enduml
