@@ -2,63 +2,50 @@
 
 
 hide circle
-skinparam linetype ortho
 
 
-entity customers {
+
+
+entity user {
   * **id**  :  int
   __
-  **email**  :  varchar
+  **login**  :  varchar
+  **password**  :  varchar
+  **user_name**  :  varchar
 }
 
-entity products {
-  * **sku**  :  varchar
-  __
-  * **title**  :  varchar
-  --
-  * **description**  :  varchar
-  --
-  * **price**  :  float
-}
-
-entity carts {
+entity chat {
   * **id**  :  int
   __
-  * **customer_id**  :  int
+  **chat_name**  :  varchar
+  **description**  :  varchar
+  **author_id**  :  int
+  **create_time**  :  date
+  **update_name**  :  date
 }
 
-entity cart_positions {
-  * **id**  :  int
-  __
-  * **product_sku**  :  varchar
-  --
-  * **cart_id**  :  int
-  --
-  * **quantity**  :  int
+entity chat_members {
+  * **id_chat**  :  int
+  * **id_user**  :  int
+    --
+  **alive**  :  bool
+  **banned**  :  bool
 }
 
-entity orders {
-  * **number**  :  int
-  __
-  * **customer_id**  :  int
+entity chat_message {
+  * **id_chat**  :  int
+  * **id_user**  :  int
+    --
+  **text**  :  varchar
+  **date**  :  date
 }
 
-entity order_lines {
-  * **order_number**  :  int
-  __
-  * **product_sku**  :  varchar
-  --
-  * **product_title**  :  varchar
-  --
-  * **price**  :  float
-  --
-  * **quantity**  :  int
-}
 
-order_lines }o--o| orders
-orders }o--|| customers
-cart_positions }o--|| products
-cart_positions }o--|| carts
-carts }o--|| customers
+chat }o--|| user
+chat_members }o--|| chat
+chat_message }o--|| chat
+chat_members }o--|| user
+chat_message }o--|| user
+
 
 @enduml
