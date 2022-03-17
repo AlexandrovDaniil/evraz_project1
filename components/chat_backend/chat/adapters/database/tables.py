@@ -1,4 +1,4 @@
-
+from datetime import datetime
 from sqlalchemy import (
     Column,
     ForeignKey,
@@ -26,7 +26,7 @@ metadata = MetaData(naming_convention=naming_convention)
 user = Table(
     'user',
     metadata,
-    Column('id', Integer, primary_key=True),
+    Column('id', Integer, primary_key=True, autoincrement=True),
     Column('login', String, nullable=True),
     Column('password', String, nullable=True),
     Column('user_name', String, nullable=True),
@@ -37,9 +37,10 @@ chat = Table(
     metadata,
     Column('id', Integer, primary_key=True),
     Column('chat_name', String, nullable=False),
+    Column('description', String, nullable=False),
     Column('author_id', ForeignKey('user.id'), nullable=False),
-    Column('create_time', String, nullable=False),
-    Column('update_time', String, nullable=False),
+    Column('create_time', String, nullable=False, default=str(datetime.now())),
+
 )
 
 chat_message = Table(

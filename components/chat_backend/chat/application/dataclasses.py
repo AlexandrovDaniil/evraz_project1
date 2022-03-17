@@ -1,27 +1,26 @@
-from typing import List
-
+from typing import List, Optional
+from datetime import datetime
 import attr
 
 
 @attr.dataclass
 class User:
-    id: int
     login: str
     password: str
     user_name: str
-
+    id: Optional[int] = None
 
 
 @attr.dataclass
 class Chat:
-    id: int
-    chat_name: str
-    author_id: User
-    create_time: str
-    update_time: str
-    members_list: List["ChatMembers"] = attr.ib(factory=list)
-    message_list: List["ChatMessage"] = attr.ib(factory=list)
 
+    author_id: User
+    chat_name: Optional[str] = None
+    description: Optional[str] = None
+    creation_date: Optional[str] = attr.ib(factory=lambda: str(datetime.now()))
+    id: Optional[int] = None
+    # members_list: List["ChatMembers"] = attr.ib(factory=list)
+    # message_list: List["ChatMessage"] = attr.ib(factory=list)
 
 
 @attr.dataclass
@@ -40,4 +39,3 @@ class ChatMembers:
     user_id: User
     alive: str
     banned: str
-
