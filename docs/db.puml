@@ -4,7 +4,7 @@
 hide circle
 
 
-
+skinparam linetype ortho
 
 entity user {
   * **id**  :  int

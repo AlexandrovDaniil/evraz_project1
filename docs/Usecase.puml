@@ -1,6 +1,7 @@
 @startuml
 'https://plantuml.com/use-case-diagram
 left to right direction
+skinparam linetype ortho
 
 rectangle "Enter in system" {
 usecase "Registration" as registration
@@ -39,16 +40,16 @@ User -- get_chat_members
 User -- send_message
 User -- get_chat_message
 
-:Super User: as Super_User
+':Super User: as Super_User
 
 
-Super_User -- create_chat
-Super_User -- delete_chat
-Super_User -- invite_user
-Super_User -- kick_user
-Super_User -- change_chat
+User -- create_chat
+User -- delete_chat
+User -- invite_user
+User -- kick_user
+User -- change_chat
 
 
-User ---|> Super_User
+'User ---|> Super_User
 
 @enduml
