@@ -16,12 +16,7 @@ naming_convention = {
     'pk': 'pk_%(table_name)s'
 }
 
-# даем имя схемы только для БД MSSQL, связано с инфраструктурными особенностями
-# metadata = MetaData(naming_convention=naming_convention, schema='app')
-
 metadata = MetaData(naming_convention=naming_convention)
-
-# yapf: disable
 
 user = Table(
     'user',
@@ -39,7 +34,7 @@ chat = Table(
     Column('chat_name', String, nullable=False),
     Column('description', String, nullable=False),
     Column('author_id', ForeignKey('user.id'), nullable=False),
-    Column('create_time', String, nullable=False, default=str(datetime.now())),
+    Column('create_time', String, nullable=False, default=str(datetime.utcnow())),
 
 )
 
