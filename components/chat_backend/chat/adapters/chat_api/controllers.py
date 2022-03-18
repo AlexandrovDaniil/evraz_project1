@@ -19,7 +19,6 @@ class Users:
 
     @join_point
     def on_post_add_user(self, request: Request, response: Response):
-        print(request.media)
         self.users.add_user(**request.media)
 
 
