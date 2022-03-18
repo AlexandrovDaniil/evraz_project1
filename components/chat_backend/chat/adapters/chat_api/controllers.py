@@ -47,3 +47,19 @@ class Chats:
     @join_point
     def on_post_add_user(self, request, response):
         self.chats.add_user(**request.media)
+
+    @join_point
+    def on_post_send_message(self, request, response):
+        self.chats.send_massage(**request.media)
+
+    @join_point
+    def on_get_get_users(self, request, response):
+        users = self.chats.get_users(**request.params)
+        response.media = {'users': users}
+
+    @join_point
+    def on_get_get_messages(self, request, response):
+        messages = self.chats.get_message(**request.params)
+        response.media = {message.send_time: message.text for message in messages}
+
+

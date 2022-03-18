@@ -1,11 +1,8 @@
-from typing import Tuple, Union
 
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    IS_DEV_MODE: bool = False
-    ALLOW_ORIGINS: Union[str, Tuple[str, ...]] = Field(default_factory=tuple)
 
     LOGGING_LEVEL: str = 'INFO'
 

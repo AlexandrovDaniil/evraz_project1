@@ -9,7 +9,7 @@ class User:
     login: str
     password: str
     user_name: str
-
+    id: Optional[int] = None
 
 @attr.dataclass
 class Chat:
@@ -26,7 +26,7 @@ class ChatMessage:
     chat_id: 'Chat'
     user_id: 'User'
     text: str
-    send_time: str
+    send_time: Optional[str] = attr.ib(factory=lambda: str(datetime.utcnow()))
     id: Optional[int] = None
 
 

@@ -2,6 +2,7 @@ from chat.adapters import chat_api, database
 from chat.application import services
 from classic.sql_storage import TransactionContext
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class Settings:
@@ -14,17 +15,17 @@ class DB:
     database.metadata.create_all(engine)
 
     context = TransactionContext(bind=engine)
-
+    Session = sessionmaker(bind=engine)
     users_repo = database.repositories.UsersRepo(context=context)
     chats_repo = database.repositories.ChatsRepo(context=context)
     chat_members_repo = database.repositories.ChatsMembersRepo(context=context)
+    chat_messages_repo = database.repositories.ChatsMessagesRepo(context=context)
 
 
 class Application:
     users = services.Users(user_repo=DB.users_repo)
-    chats = services.Chats(chat_repo=DB.chats_repo, user_repo=DB.users_repo, chat_members_repo = DB.chat_members_repo)
-    is_dev_mode = Settings.chat_api.IS_DEV_MODE
-    allow_origins = Settings.chat_api.ALLOW_ORIGINS
+    chats = services.Chats(chat_repo=DB.chats_repo, user_repo=DB.users_repo, chat_members_repo=DB.chat_members_repo,
+                           chat_messages_repo=DB.chat_messages_repo)
 
 
 class Aspects:
@@ -33,8 +34,6 @@ class Aspects:
 
 
 app = chat_api.create_app(
-    is_dev_mode=Application.is_dev_mode,
-    allow_origins=Application.allow_origins,
     users=Application.users,
     chats=Application.chats,
 )
