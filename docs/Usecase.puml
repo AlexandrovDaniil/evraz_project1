@@ -3,53 +3,58 @@
 left to right direction
 skinparam linetype ortho
 
-rectangle "Enter in system" {
-usecase "Registration" as registration
-usecase "Authorization" as authorization
+rectangle "Вход в систему" {
+usecase "Регистрация" as registration
+usecase "Авторизация" as authorization
 }
 
-rectangle "Chat" {
-usecase "Get chat info" as get_chat_info
-usecase "Leave from chat" as leave_chat
-usecase "Back to chat" as back_chat
-usecase "Get all chat members" as get_chat_members
-usecase "Send message" as send_message
-usecase "Get chat message" as get_chat_message
+rectangle "Чат" {
+usecase "Войти в чат" as start_chat
+usecase "Получить информацию о чате" as get_chat_info
+usecase "Покинуть чат" as leave_chat
+usecase "Вернуться в чат" as back_chat
+usecase "Получить всех пользователей чата" as get_chat_members
+usecase "Отправить сообщение" as send_message
+usecase "Получить сообщение чата" as get_chat_message
 }
 
-rectangle "Chat administration" {
-usecase "Create chat" as create_chat
-usecase "Delete chat" as delete_chat
-usecase "Invite user" as invite_user
-usecase "Kick user" as kick_user
-usecase "Change chat" as change_chat
+rectangle "Администрирование чата" {
+usecase "Созадть чат" as create_chat
+usecase "Удалить чат" as delete_chat
+usecase "Пригласить пользователя" as invite_user
+usecase "Выгнать пользоавтеля" as kick_user
+usecase "Изменить чат" as change_chat
 }
 
 
-:Guest: as Guest
+:Гость: as Guest
 
-Guest -- registration
+ Guest -- registration
 
-:User: as User
+:Пользователь: as User
 
-User ---- authorization
-User -- get_chat_info
-User -- leave_chat
-User -- back_chat
-User -- get_chat_members
-User -- send_message
-User -- get_chat_message
+User -- start_chat
+User ----- authorization
 
-':Super User: as Super_User
+:Участник чата: as Chat_member
 
 
-User -- create_chat
-User -- delete_chat
-User -- invite_user
-User -- kick_user
-User -- change_chat
+Chat_member -- get_chat_info
+Chat_member -- leave_chat
+Chat_member -- back_chat
+Chat_member -- get_chat_members
+Chat_member -- send_message
+Chat_member -- get_chat_message
+
+:Создатель чата: as Super_User
+
+Super_User -- create_chat
+Super_User -- delete_chat
+Super_User -- invite_user
+Super_User -- kick_user
+Super_User -- change_chat
 
 
-'User ---|> Super_User
-
+Chat_member ----|> Super_User
+User --|> Chat_member
 @enduml
