@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from .dataclasses import User, ChatMembers, ChatMessage, Chat
+from .dataclasses import Chat, ChatMembers, ChatMessage, User
 
 
 class UsersRepo(ABC):
@@ -23,3 +23,12 @@ class ChatsRepo(ABC):
     def add_instance(self, chat: Chat):
         ...
 
+
+
+class ChatsMembersRepo(ABC):
+    @abstractmethod
+    def add_instance(self, chat: Chat):
+        ...
+
+    # def update_info(self, chat: Chat):
+    #     ...

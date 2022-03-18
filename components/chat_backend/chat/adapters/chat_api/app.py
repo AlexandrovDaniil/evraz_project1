@@ -1,6 +1,8 @@
 from typing import Tuple, Union
-from classic.http_api import App
+
 from chat.application import services
+from classic.http_api import App
+
 from . import controllers
 
 

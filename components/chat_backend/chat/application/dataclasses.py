@@ -1,5 +1,6 @@
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
+
 import attr
 
 
@@ -19,6 +20,7 @@ class Chat:
     id: Optional[int] = None
 
 
+
 @attr.dataclass
 class ChatMessage:
     chat_id: 'Chat'
@@ -32,6 +34,6 @@ class ChatMessage:
 class ChatMembers:
     chat_id: 'Chat'
     user_id: 'User'
-    alive: str
-    banned: str
+    alive: Optional[str] = None
+    banned: Optional[str] = None
     id: Optional[int] = None

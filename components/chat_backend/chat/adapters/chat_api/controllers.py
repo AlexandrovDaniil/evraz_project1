@@ -1,6 +1,6 @@
-from classic.components import component
 from chat.application import services
-from falcon import Request, Response
+from classic.components import component
+
 from .join_points import join_point
 
 
@@ -18,7 +18,7 @@ class Users:
         }
 
     @join_point
-    def on_post_add_user(self, request: Request, response: Response):
+    def on_post_add_user(self, request, response):
         self.users.add_user(**request.media)
 
 
@@ -37,5 +37,13 @@ class Chats:
         }
 
     @join_point
-    def on_post_add_chat(self, request: Request, response: Response):
+    def on_post_add_chat(self, request, response):
         self.chats.add_chat(**request.media)
+
+    @join_point
+    def on_post_update_chat(self, request, response):
+        self.chats.update_chat(**request.media)
+
+    @join_point
+    def on_post_add_user(self, request, response):
+        self.chats.add_user(**request.media)

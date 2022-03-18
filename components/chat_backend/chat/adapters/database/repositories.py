@@ -1,12 +1,10 @@
 from typing import List, Optional
 
-from sqlalchemy import select
-
+from chat.application import interfaces
+from chat.application.dataclasses import Chat, ChatMembers, ChatMessage, User
 from classic.components import component
 from classic.sql_storage import BaseRepository
-
-from chat.application import interfaces
-from chat.application.dataclasses import User, ChatMembers, ChatMessage, Chat
+from sqlalchemy import select
 
 
 @component
@@ -20,6 +18,7 @@ class UsersRepo(BaseRepository, interfaces.UsersRepo):
         self.session.flush()
 
 
+
 @component
 class ChatsRepo(BaseRepository, interfaces.ChatsRepo):
     def get_by_id(self, chat_id: int) -> Optional[Chat]:
@@ -28,4 +27,13 @@ class ChatsRepo(BaseRepository, interfaces.ChatsRepo):
 
     def add_instance(self, chat: Chat):
         self.session.add(chat)
+        self.session.flush()
+        return chat.id
+
+
+@component
+class ChatsMembersRepo(BaseRepository, interfaces.ChatsMembersRepo):
+
+    def add_instance(self, chat_members: ChatMembers):
+        self.session.add(chat_members)
         self.session.flush()
