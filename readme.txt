@@ -1,3 +1,6 @@
-The project needs python 3.7 to run
-All libraries are in setup.cfg
-To include libraries in a python 3.7 virtual environment, run pip install -e ".[dev]"
+Для запуска проекта требуется Python 3.7.
+Все библиотеки находятся в setup.cfg
+Чтобы включить библиотеки в виртуальную среду Python 3.7, запустите pip install -e ".[dev]"
+В проекте используется база данных SQLite.
+База находится в корневом каталоге проекта.
+Для запуска сервера необходимо использовать команду: gunicorn -b 127.0.0.1:8002 chat.composites.chat_api:app --reload

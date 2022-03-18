@@ -12,6 +12,8 @@ from . import auth, controllers
 
 
 def create_app(
+    is_dev_mode: bool,
+    allow_origins: Union[str, Tuple[str, ...]],
     users: services.Users,
     chats: services.Chats,
 ) -> App:

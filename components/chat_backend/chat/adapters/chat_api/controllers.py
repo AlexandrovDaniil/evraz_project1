@@ -11,14 +11,13 @@ from falcon import Request, Response
 from .join_points import join_point
 
 
-#@authenticator_needed
+# @authenticator_needed
 @component
 class Users:
     users: services.Users
 
     @join_point
     def on_get_show_info(self, request, response):
-
         users = self.users.get_info(**request.params)
 
         response.media = {
@@ -39,7 +38,6 @@ class Chats:
 
     @join_point
     def on_get_show_info(self, request, response):
-
         chats = self.chats.get_info(**request.params)
 
         response.media = {
