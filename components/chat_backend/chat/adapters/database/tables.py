@@ -1,12 +1,6 @@
 from datetime import datetime
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    MetaData,
-    String,
-    Table,
-)
+
+from sqlalchemy import Column, ForeignKey, Integer, MetaData, String, Table
 
 naming_convention = {
     'ix': 'ix_%(column_0_label)s',
@@ -54,6 +48,6 @@ chat_members = Table(
     Column('id', Integer, primary_key=True),
     Column('user_id', ForeignKey('user.id'), nullable=False),
     Column('chat_id', ForeignKey('chat.id'), nullable=False),
-    Column('alive', String, nullable=False),
-    Column('banned', String, nullable=False),
+    Column('alive', String, nullable=True, default='yes'),
+    Column('banned', String, nullable=True, default='no'),
 )
