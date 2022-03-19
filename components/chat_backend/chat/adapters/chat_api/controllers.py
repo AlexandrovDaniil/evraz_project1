@@ -55,11 +55,16 @@ class Chats:
     @join_point
     def on_get_get_users(self, request, response):
         users = self.chats.get_users(**request.params)
-        response.media = {'users': users}
+        response.media = {'users': [user.user_name for user in users]}
 
     @join_point
     def on_get_get_messages(self, request, response):
         messages = self.chats.get_message(**request.params)
         response.media = {message.send_time: message.text for message in messages}
+
+    @join_point
+    def on_post_delete_chat(self, request, response):
+        self.chats.delete_chat(**request.media)
+
 
 

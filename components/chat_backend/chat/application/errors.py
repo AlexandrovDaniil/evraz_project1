@@ -12,3 +12,7 @@ class NoChat(AppError):
 class NoAuthor(AppError):
     msg_template = "User with id '{id}' is not author of this chat"
     code = 'chat.no_author'
+
+class NoUserInChat(AppError):
+    msg_template = "User with id '{id}' is not in this chat"
+    code = 'chat.no_user_in_chat'

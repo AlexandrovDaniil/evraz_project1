@@ -16,6 +16,7 @@ class UserInfo(DTO):
     login: str
     password: str
     user_name: str
+    id: Optional[int]
 
 
 class ChatInfo(DTO):
@@ -37,6 +38,7 @@ class ChatUpdateInfo(DTO):
 class AddChatMember(DTO):
     user_id: int
     chat_id: int
+    author_id: Optional[int]
     alive: Optional[str] = None
     banned: Optional[str] = None
 
@@ -86,17 +88,23 @@ class Chats:
 
     def _author_check(self, user_id: int, chat_id: int):
         chat = self.chat_repo.get_by_id(chat_id)
+        print(chat.author_id, user_id, chat_id)
         if chat.author_id == user_id:
             return True
         raise errors.NoAuthor(id=user_id)
 
+    def _chat_member_check(self, user_id: int, chat_id: int):
+        chat_members = self.chat_members_repo.get_users(chat_id)
+        if user_id in [chat_member.id for chat_member in chat_members]:
+            return True
+        raise errors.NoUserInChat(id=user_id)
+
     @join_point
     @validate_arguments
-    def get_info(self, id: int):
-        chat = self.chat_repo.get_by_id(id)
-        if not chat:
-            raise errors.NoChat(id=id)
-        return chat
+    def get_info(self, user_id: int, chat_id: int):
+        chat = self.chat_repo.get_by_id(chat_id)
+        if self._chat_check(chat_id) and self._chat_member_check(user_id=user_id, chat_id=chat_id):
+            return chat
 
     @join_point
     @validate_with_dto
@@ -104,7 +112,7 @@ class Chats:
         if self._user_check(chat_info.author_id):
             new_chat = chat_info.create_obj(Chat)
             chat_id = self.chat_repo.add_instance(new_chat)
-            add_author = AddChatMember(user_id=chat_info.author_id, chat_id=chat_id)
+            add_author = AddChatMember(user_id=chat_info.author_id, chat_id=chat_id, author_id=chat_info.author_id)
             self.add_user(**add_author.dict())
 
     @join_point
@@ -117,7 +125,9 @@ class Chats:
     @join_point
     @validate_with_dto
     def add_user(self, chat_members_info: AddChatMember):
-        if self._chat_check(chat_members_info.chat_id) and self._user_check(chat_members_info.user_id):
+        print(chat_members_info.chat_id, chat_members_info.author_id)
+        is_author = self._author_check(chat_id=chat_members_info.chat_id, user_id=chat_members_info.author_id)
+        if is_author and self._chat_check(chat_members_info.chat_id) and self._user_check(chat_members_info.user_id):
             new_chat_member = chat_members_info.create_obj(ChatMembers)
             self.chat_members_repo.add_instance(new_chat_member)
 
@@ -129,18 +139,21 @@ class Chats:
 
     @join_point
     @validate_arguments
-    def delete_chat(self, chat_id: int):
-        ...
+    def delete_chat(self, chat_id: int, user_id: int):
+        chat = self.chat_repo.get_by_id(chat_id)
+        if chat.author_id == user_id and self._chat_check(chat_id):
+            self.chat_repo.delete_instance(chat)
 
     @join_point
     @validate_with_dto
     def send_massage(self, message: MessageInfo):
-        '''check if user in chat'''
-        new_message = message.create_obj(ChatMessage)
-        self.chat_messages_repo.send_message(new_message)
+        if self._chat_member_check(user_id=message.user_id, chat_id=message.chat_id):
+            new_message = message.create_obj(ChatMessage)
+            self.chat_messages_repo.send_message(new_message)
 
     @join_point
     @validate_arguments
-    def get_message(self, chat_id: int):
-        message = self.chat_messages_repo.get_message(chat_id)
-        return message
+    def get_message(self, chat_id: int, user_id: int):
+        if self._chat_check(chat_id) and self._chat_member_check(user_id=user_id, chat_id=chat_id):
+            message = self.chat_messages_repo.get_message(chat_id, user_id)
+            return message

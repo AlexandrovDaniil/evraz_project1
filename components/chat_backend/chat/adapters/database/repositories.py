@@ -20,7 +20,7 @@ class UsersRepo(BaseRepository, interfaces.UsersRepo):
 
 @component
 class ChatsRepo(BaseRepository, interfaces.ChatsRepo):
-    def get_by_id(self, chat_id: int) -> Optional[Chat]:
+    def get_by_id(self, chat_id: int, user_id: Optional[int] = None) -> Optional[Chat]:
         query = select(Chat).where(Chat.id == chat_id)
         return self.session.execute(query).scalars().one_or_none()
 
@@ -29,8 +29,14 @@ class ChatsRepo(BaseRepository, interfaces.ChatsRepo):
         self.session.flush()
         return chat.id
 
-    def delete_instance(self, chat_id: int):
-        ...
+    def delete_instance(self, chat: Chat):
+        members = self.session.query(ChatMembers).where(ChatMembers.chat_id == chat.id).all()
+        [self.session.delete(member) for member in self.session.query(ChatMembers).where(
+            ChatMembers.chat_id == chat.id).all()]
+        self.session.commit()
+
+        self.session.delete(chat)
+        self.session.commit()
 
 
 @component
@@ -39,16 +45,13 @@ class ChatsMembersRepo(BaseRepository, interfaces.ChatsMembersRepo):
         self.session.add(chat_members)
         self.session.flush()
 
-    def get_users(self, chat_id: int) -> List[str]:
-        res = []
+    def get_users(self, chat_id: int) -> List[User]:
         query = self.session.query(User, ChatMembers)
         query = query.join(User, User.id == ChatMembers.user_id)
         query = query.filter(ChatMembers.chat_id == chat_id)
-        records = query.all()
-        for n, i in enumerate(records):
-            if i[0].user_name not in res:
-                res.append(i[0].user_name)
-        return res
+        records = self.session.execute(query).scalars().all()
+        print(records)
+        return records
 
 
 @component
@@ -57,9 +60,7 @@ class ChatsMessagesRepo(BaseRepository, interfaces.ChatsMessagesRepo):
         self.session.add(message)
         self.session.flush()
 
-    def get_message(self, chat_id: int) -> Optional[List[ChatMessage]]:
+    def get_message(self, chat_id: int, user_id: Optional[int] = None) -> Optional[List[ChatMessage]]:
         query = select(ChatMessage).where(ChatMessage.chat_id == chat_id)
-        res = []
-        for i in self.session.execute(query).scalars():
-            res.append(i)
-        return res
+        records = self.session.execute(query).scalars().all()
+        return records
