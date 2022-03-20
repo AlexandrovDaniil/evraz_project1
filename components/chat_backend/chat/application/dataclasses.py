@@ -35,6 +35,4 @@ class ChatMembers:
     chat_id: 'Chat'
     user_id: 'User'
     author_id: 'User'
-    #alive: Optional[str] = None
-    #banned: Optional[str] = None
     id: Optional[int] = None

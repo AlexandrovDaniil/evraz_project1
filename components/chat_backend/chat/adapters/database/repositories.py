@@ -4,7 +4,7 @@ from chat.application import interfaces
 from chat.application.dataclasses import Chat, ChatMembers, ChatMessage, User
 from classic.components import component
 from classic.sql_storage import BaseRepository
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 
 @component
@@ -17,6 +17,8 @@ class UsersRepo(BaseRepository, interfaces.UsersRepo):
     def add_instance(self, user: User):
         self.session.add(user)
         self.session.flush()
+        self.session.refresh()
+        return user
 
 
 @component
@@ -28,14 +30,13 @@ class ChatsRepo(BaseRepository, interfaces.ChatsRepo):
     def add_instance(self, chat: Chat):
         self.session.add(chat)
         self.session.flush()
-        return chat.id
+        return chat
 
     def delete_instance(self, chat: Chat):
         members = self.session.query(ChatMembers).where(ChatMembers.chat_id == chat.id).all()
         [self.session.delete(member) for member in self.session.query(ChatMembers).where(
             ChatMembers.chat_id == chat.id).all()]
         self.session.commit()
-
         self.session.delete(chat)
         self.session.commit()
 
@@ -52,6 +53,11 @@ class ChatsMembersRepo(BaseRepository, interfaces.ChatsMembersRepo):
         query = query.filter(ChatMembers.chat_id == chat_id)
         records = self.session.execute(query).scalars().all()
         return records
+
+    def leave(self, chat_id: int, user_id: int):
+        query = delete(ChatMembers).where(ChatMembers.chat_id == chat_id, ChatMembers.user_id == user_id)
+        self.session.execute(query)
+        self.session.flush()
 
 
 @component

@@ -31,6 +31,8 @@ class ChatsMembersRepo(ABC):
     @abstractmethod
     def get_users(self, chat_id: int, user_id: Optional[int] = None) -> List[User]: ...
 
+    @abstractmethod
+    def leave(self, chat_id: int, user_id: int): ...
 
 class ChatsMessagesRepo(ABC):
     @abstractmethod

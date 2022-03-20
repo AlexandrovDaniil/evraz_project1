@@ -1,5 +1,6 @@
 from typing import Optional
 
+import jwt
 from classic.app import DTO, validate_with_dto
 from classic.aspects import PointCut
 from classic.components import component
@@ -40,8 +41,6 @@ class AddChatMember(DTO):
     chat_id: int
     author_id: Optional[int]
     id: Optional[int]
-    #alive: Optional[str] = None
-    #banned: Optional[str] = None
 
 
 class MessageInfo(DTO):
@@ -50,6 +49,7 @@ class MessageInfo(DTO):
     text: str
     send_time: Optional[str]
     id: Optional[int]
+
 
 @component
 class Users:
@@ -65,9 +65,18 @@ class Users:
 
     @join_point
     @validate_with_dto
-    def add_user(self, user_info: UserInfo):
+    def add_user(self, user_info: UserInfo) -> str:
         new_user = user_info.create_obj(User)
-        self.user_repo.add_instance(new_user)
+        user = self.user_repo.add_instance(new_user)
+        token = jwt.encode({
+            'sub': user.id,
+            'login': user.login,
+            'name': user.user_name,
+            'group': 'User'
+
+        }, 'my_secret_jwt', algorithm='HS256')
+
+        return token
 
 
 @component
@@ -94,9 +103,9 @@ class Chats:
         raise errors.NoAuthor(id=user_id)
 
     def _chat_member_check(self, user_id: int, chat_id: int):
-        chat_members = []
-        chat_members.append(self.chat_members_repo.get_users(chat_id))
-        #chat_members = self.chat_members_repo.get_users(chat_id)
+        #chat_members = []
+        #chat_members.append(self.chat_members_repo.get_users(chat_id))
+        chat_members = self.chat_members_repo.get_users(chat_id)
         if user_id in [chat_member.id for chat_member in chat_members]:
             return True
         raise errors.NoUserInChat(id=user_id)
@@ -113,9 +122,8 @@ class Chats:
     def add_chat(self, chat_info: ChatInfo):
         if self._user_check(chat_info.author_id):
             new_chat = chat_info.create_obj(Chat)
-            chat_id = self.chat_repo.add_instance(new_chat)
-            #chat_info.id = chat_id
-            add_author = AddChatMember(user_id=chat_info.author_id, chat_id=chat_info.id, author_id=chat_info.author_id)
+            chat = self.chat_repo.add_instance(new_chat)
+            add_author = AddChatMember(user_id=chat_info.author_id, chat_id=chat.id, author_id=chat_info.author_id)
             self.add_user(**add_author.dict())
 
     @join_point
@@ -161,3 +169,12 @@ class Chats:
         if self._chat_check(chat_id) and self._chat_member_check(user_id=user_id, chat_id=chat_id):
             message = self.chat_messages_repo.get_message(chat_id, user_id)
             return message
+
+    @join_point
+    @validate_arguments
+    def leave_chat(self, chat_id: int, user_id: int):
+        if self._chat_check(chat_id) and self._chat_member_check(user_id=user_id, chat_id=chat_id):
+            if self._author_check(user_id, chat_id):
+                self.delete_chat(chat_id=chat_id, user_id=user_id)
+            else:
+                self.chat_members_repo.leave(chat_id=chat_id, user_id=user_id)

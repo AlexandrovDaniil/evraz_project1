@@ -2,8 +2,7 @@ from datetime import datetime
 
 import pytest
 from attr import asdict
-
-from chat.application.services import Users, Chats
+from chat.application.services import Chats, Users
 
 
 @pytest.fixture(scope='function')
@@ -91,8 +90,14 @@ def test_add_chat_msg(service_chat):
     service_chat.send_massage(**data_chat_msg)
     service_chat.chat_messages_repo.send_message.assert_called_once()
 
+
 def test_delete_chat(service_chat):
     service_chat.delete_chat(chat_id=1, user_id=1)
+    service_chat.chat_repo.delete_instance.assert_called_once()
+
+
+def test_leave(service_chat):
+    service_chat.leave_chat(chat_id=1, user_id=1)
     service_chat.chat_repo.delete_instance.assert_called_once()
 
 

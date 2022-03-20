@@ -3,7 +3,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-
+    IS_DEV_MODE: bool = True
     LOGGING_LEVEL: str = 'INFO'
 
     @property

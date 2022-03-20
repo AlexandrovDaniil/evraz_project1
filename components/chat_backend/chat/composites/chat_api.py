@@ -23,6 +23,7 @@ class DB:
 
 
 class Application:
+    is_dev_mode = Settings.chat_api.IS_DEV_MODE
     users = services.Users(user_repo=DB.users_repo)
     chats = services.Chats(chat_repo=DB.chats_repo, user_repo=DB.users_repo, chat_members_repo=DB.chat_members_repo,
                            chat_messages_repo=DB.chat_messages_repo)
@@ -34,6 +35,7 @@ class Aspects:
 
 
 app = chat_api.create_app(
+    is_dev_mode=Application.is_dev_mode,
     users=Application.users,
     chats=Application.chats,
 )

@@ -2,8 +2,7 @@ from datetime import datetime
 from unittest.mock import Mock
 
 import pytest
-
-from chat.application import interfaces, dataclasses
+from chat.application import dataclasses, interfaces
 
 
 @pytest.fixture(scope='function')
@@ -52,6 +51,7 @@ def chat_messages():
 def user_repo(user):
     user_repo = Mock(interfaces.UsersRepo)
     user_repo.get_by_id = Mock(return_value=user)
+    user_repo.add_instance = Mock(return_value=user)
     return user_repo
 
 
@@ -59,6 +59,7 @@ def user_repo(user):
 def chat_repo(chat):
     chat_repo = Mock(interfaces.ChatsRepo)
     chat_repo.get_by_id = Mock(return_value=chat)
+    chat_repo.add_instance = Mock(return_value=chat)
     return chat_repo
 
 
@@ -73,4 +74,5 @@ def chat_messages_repo(chat_messages):
 def chat_members_repo(chat_members):
     chat_members_repo = Mock(interfaces.UsersRepo)
     chat_members_repo.get_users = Mock(return_value=chat_members)
+    chat_members_repo.leave = Mock(return_value=chat_members)
     return chat_members_repo

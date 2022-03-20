@@ -6,14 +6,11 @@ class Permissions:
 
 
 class Groups:
-    ADMINS = Group('admins', permissions=(Permissions.FULL_CONTROL,))
+   USERS = Group('User', permissions=(Permissions.FULL_CONTROL,))
 
 
-dummy_strategy = strategies.Dummy(
-    user_id=1,
-    login='dummy',
-    name='Admin dummy',
-    groups=(Groups.ADMINS.name,),
+jwt_strategy = strategies.JWT(
+    secret_key='my_secret_jwt'
 )
 
-ALL_GROUPS = (Groups.ADMINS,)
+ALL_GROUPS = (Groups.USERS,)
