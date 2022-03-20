@@ -16,7 +16,7 @@ class Chat:
     author_id: 'User'
     chat_name: Optional[str] = None
     description: Optional[str] = None
-    creation_date: Optional[str] = attr.ib(factory=lambda: str(datetime.utcnow()))
+    creation_date: Optional[str] = attr.ib(factory=lambda: datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'))
     id: Optional[int] = None
 
 
@@ -26,7 +26,7 @@ class ChatMessage:
     chat_id: 'Chat'
     user_id: 'User'
     text: str
-    send_time: Optional[str] = attr.ib(factory=lambda: str(datetime.utcnow()))
+    send_time: Optional[str] = attr.ib(factory=lambda: datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'))
     id: Optional[int] = None
 
 
@@ -35,6 +35,6 @@ class ChatMembers:
     chat_id: 'Chat'
     user_id: 'User'
     author_id: 'User'
-    alive: Optional[str] = None
-    banned: Optional[str] = None
+    #alive: Optional[str] = None
+    #banned: Optional[str] = None
     id: Optional[int] = None

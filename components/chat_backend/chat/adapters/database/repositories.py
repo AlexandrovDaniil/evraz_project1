@@ -11,7 +11,8 @@ from sqlalchemy import select
 class UsersRepo(BaseRepository, interfaces.UsersRepo):
     def get_by_id(self, user_id: int) -> Optional[User]:
         query = select(User).where(User.id == user_id)
-        return self.session.execute(query).scalars().one_or_none()
+        result = self.session.execute(query).scalars().one_or_none()
+        return result
 
     def add_instance(self, user: User):
         self.session.add(user)
@@ -45,12 +46,11 @@ class ChatsMembersRepo(BaseRepository, interfaces.ChatsMembersRepo):
         self.session.add(chat_members)
         self.session.flush()
 
-    def get_users(self, chat_id: int) -> List[User]:
+    def get_users(self, chat_id: int, user_id: Optional[int] = None) -> List[User]:
         query = self.session.query(User, ChatMembers)
         query = query.join(User, User.id == ChatMembers.user_id)
         query = query.filter(ChatMembers.chat_id == chat_id)
         records = self.session.execute(query).scalars().all()
-        print(records)
         return records
 
 

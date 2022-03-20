@@ -65,6 +65,3 @@ class Chats:
     @join_point
     def on_post_delete_chat(self, request, response):
         self.chats.delete_chat(**request.media)
-
-
-
