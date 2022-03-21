@@ -10,6 +10,9 @@ class UsersRepo(ABC):
     def get_by_id(self, id_: int) -> Optional[User]: ...
 
     @abstractmethod
+    def get_by_login(self, login: str) -> Optional[User]: ...
+
+    @abstractmethod
     def add_instance(self, user: User): ...
 
 

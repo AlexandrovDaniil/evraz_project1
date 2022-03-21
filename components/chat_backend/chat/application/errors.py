@@ -5,6 +5,14 @@ class NoUser(AppError):
     msg_template = "No user with id '{id}'"
     code = 'chat.no_user'
 
+class NoUserLogin(AppError):
+    msg_template = "No user with login '{login}'"
+    code = 'chat.no_user_login'
+
+class WrongUserPassword(AppError):
+    msg_template = "Wrong password"
+    code = 'chat.wrong_password'
+
 class NoChat(AppError):
     msg_template = "No chat with id '{id}'"
     code = 'chat.no_chat'

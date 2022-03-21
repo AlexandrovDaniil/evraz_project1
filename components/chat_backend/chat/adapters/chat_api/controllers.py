@@ -1,3 +1,5 @@
+import jwt
+
 from chat.application import services
 from classic.components import component
 from classic.http_auth import authenticate, authenticator_needed
@@ -9,6 +11,16 @@ from .join_points import join_point
 @component
 class Users:
     users: services.Users
+
+    def generate_token(self, user) -> str:
+        token = jwt.encode({
+            'sub': user.id,
+            'login': user.login,
+            'name': user.user_name,
+            'group': 'User'
+
+        }, 'my_secret_jwt', algorithm='HS256')
+        return token
 
     @join_point
     @authenticate
@@ -23,7 +35,14 @@ class Users:
 
     @join_point
     def on_post_add_user(self, request, response):
-        token = self.users.add_user(**request.media)
+        user = self.users.add_user(**request.media)
+        token = self.generate_token(user)
+        response.media = token
+
+    @join_point
+    def on_post_user_login(self, request, response):
+        user = self.users.login_user(**request.media)
+        token = self.generate_token(user)
         response.media = token
 
 
@@ -52,10 +71,9 @@ class Chats:
 
     @authenticate
     @join_point
-    def on_post_update_chat(self, request, response):
+    def on_post_update_chat_info(self, request, response):
         request.media['author_id'] = request.context.client.user_id
-        new_chat = self.chats.update_chat(**request.media)
-        response.media(new_chat)
+        self.chats.update_chat(**request.media)
 
     @authenticate
     @join_point

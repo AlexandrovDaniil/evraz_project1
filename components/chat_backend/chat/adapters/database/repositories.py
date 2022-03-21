@@ -14,10 +14,14 @@ class UsersRepo(BaseRepository, interfaces.UsersRepo):
         result = self.session.execute(query).scalars().one_or_none()
         return result
 
+    def get_by_login(self, user_login: int) -> Optional[User]:
+        query = select(User).where(User.login == user_login)
+        result = self.session.execute(query).scalars().one_or_none()
+        return result
+
     def add_instance(self, user: User):
         self.session.add(user)
         self.session.flush()
-        self.session.refresh()
         return user
 
 

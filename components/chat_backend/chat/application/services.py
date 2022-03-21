@@ -65,18 +65,21 @@ class Users:
 
     @join_point
     @validate_with_dto
-    def add_user(self, user_info: UserInfo) -> str:
+    def add_user(self, user_info: UserInfo) -> User:
         new_user = user_info.create_obj(User)
         user = self.user_repo.add_instance(new_user)
-        token = jwt.encode({
-            'sub': user.id,
-            'login': user.login,
-            'name': user.user_name,
-            'group': 'User'
+        return user
 
-        }, 'my_secret_jwt', algorithm='HS256')
-
-        return token
+    @join_point
+    @validate_arguments
+    def login_user(self, user_login: str, user_password: str):
+        user = self.user_repo.get_by_login(user_login)
+        if not user:
+            raise errors.NoUserLogin(login=user_login)
+        if user.password == user_password:
+            return user
+        else:
+            raise errors.WrongUserPassword()
 
 
 @component
