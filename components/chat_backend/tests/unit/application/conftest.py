@@ -35,6 +35,15 @@ def chat_members():
         id=1
     )
 
+@pytest.fixture(scope='function')
+def chat_members2():
+    return dataclasses.ChatMembers(
+        chat_id=1,
+        user_id=2,
+        author_id=1,
+        id=2
+    )
+
 
 @pytest.fixture(scope='function')
 def chat_messages():
@@ -73,6 +82,6 @@ def chat_messages_repo(chat_messages):
 @pytest.fixture(scope='function')
 def chat_members_repo(chat_members):
     chat_members_repo = Mock(interfaces.UsersRepo)
-    chat_members_repo.get_users = Mock(return_value=chat_members)
+    chat_members_repo.get_users = Mock(return_value=[chat_members])
     chat_members_repo.leave = Mock(return_value=chat_members)
     return chat_members_repo

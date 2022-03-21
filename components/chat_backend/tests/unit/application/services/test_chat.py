@@ -103,7 +103,7 @@ def test_leave(service_chat):
 
 def test_get_chat_user(service_chat):
     members = service_chat.get_users(chat_id=1, user_id=1)
-    assert asdict(members) == data_chat_user
+    assert asdict(members[0]) == data_chat_user
 
 
 def test_get_chat_msg(service_chat):

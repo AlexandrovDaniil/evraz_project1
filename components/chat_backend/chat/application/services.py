@@ -103,8 +103,6 @@ class Chats:
         raise errors.NoAuthor(id=user_id)
 
     def _chat_member_check(self, user_id: int, chat_id: int):
-        #chat_members = []
-        #chat_members.append(self.chat_members_repo.get_users(chat_id))
         chat_members = self.chat_members_repo.get_users(chat_id)
         if user_id in [chat_member.id for chat_member in chat_members]:
             return True
